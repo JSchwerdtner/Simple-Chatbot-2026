@@ -1,0 +1,8 @@
+/github-ai-agent
+├── .env                # API Keys (GITHUB_TOKEN, OPENAI_API_KEY)
+├── package.json        # Dependencies
+├── src/
+│   ├── index.js        # Main entry point (Webhook handler)
+│   ├── github.js       # GitHub API integration (Octokit)
+│   └── ai.js           # LLM logic (Prompting & Response)
+└── README.md
