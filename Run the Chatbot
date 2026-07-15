@@ -1,0 +1,52 @@
+1. CLI Execution (Command Line)
+For a CLI, you want to trigger your agent manually by typing a command in your terminal. This is ideal for testing logic or running batch updates on issues.
+
+Implementation Strategy:
+Create a cli.js file that acts as your entry point, allowing you to pass arguments like the issue number.
+
+JavaScript
+// cli.js
+import { processPrompt } from './src/ai.js';
+import { addComment } from './src/github.js';
+
+const [,, owner, repo, issueNumber, prompt] = process.argv;
+
+async function run() {
+  console.log("Analyzing...");
+  const aiResponse = await processPrompt(prompt);
+  await addComment(owner, repo, issueNumber, aiResponse);
+  console.log("Comment posted successfully!");
+}
+
+run();
+How to run it:
+
+Bash
+node cli.js my-username my-repo 123 "Please summarize this issue."
+2. Web UI Execution
+If you want a graphical interface to interact with the bot, you have two primary paths:
+
+A. The "Quick & Professional" Path (Streamlit or Gradio)
+If you know a little Python, you can use Gradio or Streamlit. Even though your core logic is in Node.js, you can wrap the Node script in a Python subprocess call or rewrite the logic in Python to create a dashboard in minutes.
+
+Example (Gradio):
+
+Python
+import gradio as gr
+import subprocess
+
+def trigger_agent(repo, issue, prompt):
+    # Calls your Node.js script
+    result = subprocess.run(['node', 'cli.js', 'user', repo, issue, prompt], capture_output=True)
+    return result.stdout.decode()
+
+demo = gr.Interface(fn=trigger_agent, inputs=["text", "text", "text"], outputs="text")
+demo.launch()
+B. The "Full Stack" Path (Fastify/Express + Frontend)
+If you want to keep everything in JavaScript, build a simple web dashboard using Fastify or Express with a frontend (React or HTML/Tailwind).
+
+Backend Route: Create an endpoint like POST /api/run-agent.
+
+Frontend: Build a simple form with fields for "Repo," "Issue #," and "Task Description."
+
+Action: The frontend sends a fetch request to your backend, which then executes your src/github.js and src/ai.js logic.
